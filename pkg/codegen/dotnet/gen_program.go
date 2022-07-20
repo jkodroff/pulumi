@@ -607,7 +607,7 @@ func (g *generator) genResourceOptions(opts *pcl.ResourceOptions) string {
 		appendOption("Provider", opts.Provider)
 	}
 	if opts.Version != nil {
-		appendOption("Version", opts.Version)
+		appendOption("version", opts.Version)
 	}
 	if opts.DependsOn != nil {
 		appendOption("DependsOn", opts.DependsOn)
