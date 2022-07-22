@@ -3,6 +3,9 @@
 - [cli] Updated to the latest version of go-git.
   [#10330](https://github.com/pulumi/pulumi/pull/10330)
 
+- [codegen/schema] Support options.version on pulumi convert
+  [#10194](https://github.com/pulumi/pulumi/pull/10194)
+
 ### Bug Fixes
 
 - [cli] Paginate template options
