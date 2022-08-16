@@ -13,6 +13,7 @@
 # limitations under the License.
 
 
+from contextvars import ContextVar
 import importlib
 import sys
 import typing
@@ -119,3 +120,88 @@ def lazy_import(fullname):
     sys.modules[fullname] = module
     loader.exec_module(module)
     return module
+
+
+def contextproperty(_fn=None, *, default: typing.Optional[typing.Any] = None):
+    def inner(func: typing.Callable):
+        new_property = ContextProperty(
+            name=func.__qualname__, doc=func.__doc__, default=default
+        )
+        inner.__doc__ = new_property.__doc__
+        return new_property
+
+    if _fn is None:
+        return inner
+    return inner(_fn)
+
+
+class ContextProperty:
+    def __init__(
+        self,
+        *_,
+        name: str,
+        doc: typing.Optional[str] = None,
+        default: typing.Optional[typing.Any] = None,
+    ):
+        if not doc:
+            doc = self.fget.__doc__
+        self.__doc__ = doc
+        self._name = name
+        self.__default = default
+        self._data: ContextVar = ContextVar(name, default=default)
+
+    def __repr__(self):
+        return f"<class {type(self).__qualname__}[name={self._data.name.__repr__()} default={self.__default.__repr__()}] value: {self._data.get().__repr__()}>"
+
+    def fget(self, *_):
+        return self._data.get(self.__default)
+
+    def fset(self, v: typing.Any, *_):
+        if self._data.get() is None:
+            self.__default = v
+        return self._data.set(v)
+
+    def fdel(self, *_):
+        return self._data.reset()
+
+    def __set__(self, _, v: typing.Any):
+        print(f"Settings {self._name} from {self.fget()} to {v}")
+        return self.fset(v)
+
+    def __get__(self, obj: typing.Optional[typing.Any], _):
+        if obj is None or isinstance(self.fget(), dict):
+            return self
+        return self.fget()
+
+    def __delete__(self, *_):
+        self.fdel()
+
+    def __setitem__(self, key, value):
+        data = self.fget()
+        if not isinstance(data, dict):
+            raise TypeError("Can't set key values on non-dict variables.")
+        data[key] = value
+        return self.fset(data)
+
+    def __dict__(self):
+        if not isinstance(self.fget(), dict):
+            raise TypeError(f"{self} is not a dictionary")
+        return self.fget()
+
+    def __getitem__(self, key):
+        return self.fget()[key]
+
+    def __contains__(self, element):
+        return element in self.fget()
+
+    def getter(self, fget):
+        prop = type(self)(fget, self.fset, self.fdel, name=self._name, doc=self.__doc__)
+        return prop
+
+    def setter(self, fset):
+        prop = type(self)(self.fget, fset, self.fdel, name=self._name, doc=self.__doc__)
+        return prop
+
+    def deleter(self, fdel):
+        prop = type(self)(self.fget, self.fset, fdel, name=self._name, doc=self.__doc__)
+        return prop

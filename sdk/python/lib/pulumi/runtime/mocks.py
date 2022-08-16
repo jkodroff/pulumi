@@ -25,7 +25,7 @@ from . import rpc, rpc_manager
 from .settings import Settings, configure, get_stack, get_project, get_root_resource
 from .sync_await import _ensure_event_loop, _sync_await
 from ..runtime.proto import engine_pb2, provider_pb2, resource_pb2
-from ..runtime.stack import Stack, run_pulumi_func, wait_for_rpcs
+from ..runtime.stack import Stack, run_pulumi_func
 
 if TYPE_CHECKING:
     from ..resource import Resource
