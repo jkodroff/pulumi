@@ -1,7 +1,7 @@
 ### Improvements
 
-- [cli] Updated to the latest version of go-git.
-  [#10330](https://github.com/pulumi/pulumi/pull/10330)
+- [provider/python]: Improved exception display. The traceback is now shorter and it always starts with user code.  
+  [#10336](https://github.com/pulumi/pulumi/pull/10336)
 
 - [codegen/schema] Support options.version on pulumi convert
 
@@ -13,17 +13,15 @@
 - [sdk/dotnet] Fix serialization of non-generic list types.
   [#10277](https://github.com/pulumi/pulumi/pull/10277)
 
-- [codegen/nodejs] Correctly reference external enums.
-  [#10286](https://github.com/pulumi/pulumi/pull/10286)
+- [sdk/python] Update PyYAML to 6.0
 
-- [sdk/python] Support deeply nested protobuf objects.
-  [#10284](https://github.com/pulumi/pulumi/pull/10284)
+- [cli/watch] `pulumi watch` now uses relies on a program built on [`watchexec`](https://github.com/watchexec/watchexec)
+  to implement recursive file watching, improving performance and cross-platform compatibility.
+  This `pulumi-watch` program is now included in releases.
+  [#10213](https://github.com/pulumi/pulumi/issues/10213)
 
-- Revert [Remove api/renewLease from startup crit path](pulumi/pulumi#10168) to fix #10293.
-  [#10294](https://github.com/pulumi/pulumi/pull/10294)
 
-- [codegen/go] Remove superfluous double forward slash from doc.go
-  [#10317](https://github.com/pulumi/pulumi/pull/10317)
+### Bug Fixes
 
-- [cli/plugins] Don't retry plugin downloads that failed due to local file errors.
-  [#10341](https://github.com/pulumi/pulumi/pull/10341)
+- [engine/backends]: Fix bug where File state backend failed to apply validation to stack names, resulting in a panic.
+  [#10417](https://github.com/pulumi/pulumi/pull/10417)
